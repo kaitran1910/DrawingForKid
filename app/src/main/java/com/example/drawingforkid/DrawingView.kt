@@ -3,6 +3,7 @@ package com.example.drawingforkid
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 
@@ -60,7 +61,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
         // Paint flag that enables dithering when blitting
         mCanvasPaint = Paint(Paint.DITHER_FLAG)
-        mBrushSize = 20.toFloat()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -124,6 +124,20 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
         invalidate()
         return true
+    }
+
+    /**
+     * This method is called when either the brush or the eraser
+     * sizes are to be changed. This method sets the brush/eraser
+     * sizes to the new values depending on user selection.
+     */
+    fun setSizeForBrush(newSize: Float) {
+        mBrushSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            newSize,
+            resources.displayMetrics
+        )
+        mDrawPaint!!.strokeWidth = mBrushSize
     }
 
     internal inner class CustomPath(
