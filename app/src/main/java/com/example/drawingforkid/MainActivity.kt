@@ -4,9 +4,13 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
+    // A variable for current color is picked from color pallet.
+    private var mImageButtonCurrentPaint: ImageButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,6 +18,15 @@ class MainActivity : AppCompatActivity() {
 
         drawingView = findViewById(R.id.drawingView)
         drawingView?.setSizeForBrush(20.toFloat())
+
+        val linearLayoutPaintColors = findViewById<LinearLayout>(R.id.ll_paint_colors)
+        mImageButtonCurrentPaint = linearLayoutPaintColors.getChildAt(0) as ImageButton
+        mImageButtonCurrentPaint?.setImageDrawable(
+            ContextCompat.getDrawable(
+                this,
+                R.drawable.pallet_pressed
+            )
+        )
 
         val ibBrush = findViewById<ImageButton>(R.id.ib_brush)
         ibBrush.setOnClickListener {
