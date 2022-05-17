@@ -7,7 +7,11 @@ import android.view.MotionEvent
 import android.view.View
 
 class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    /**
+     * Variable of the CustomPath internal inner class
+     */
     private var mDrawPath: CustomPath? = null
+    private var mPaths = ArrayList<CustomPath>()
 
     /**
      * A Canvas is a drawing surface on which you can draw graphics.
@@ -24,6 +28,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private var mCanvasPaint: Paint? = null
     private var mBrushSize: Float = 0.toFloat()
     private var color = Color.BLACK
+
+    /**
+     * A variable for canvas which will be initialized later and used.
+     *
+     * The Canvas class holds the "draw" calls. To draw something, you need 4 basic components:
+     * - A Bitmap to hold the pixels,
+     * - A Canvas to host the draw calls (writing into the bitmap),
+     * - A drawing primitive (e.g. Rect, Path, text, Bitmap),
+     * - A paint (to describe the colors and styles for the drawing)
+     */
     private var canvas: Canvas? = null
 
     init {
@@ -37,11 +51,14 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private fun setUpDrawing() {
         mDrawPath = CustomPath(color, mBrushSize)
         mDrawPaint = Paint()
+
         mDrawPaint!!.color = color
-        mDrawPaint!!.style = Paint.Style.STROKE
-        mDrawPaint!!.strokeJoin = Paint.Join.ROUND
-        mDrawPaint!!.strokeCap = Paint.Cap.ROUND
-        mDrawPaint!!.strokeWidth = mBrushSize
+
+        mDrawPaint!!.style = Paint.Style.STROKE         // To use STROKE style
+        mDrawPaint!!.strokeJoin = Paint.Join.ROUND      // To use ROUND stroke join
+        mDrawPaint!!.strokeCap = Paint.Cap.ROUND        // To use ROUND stroke cap
+
+        // Paint flag that enables dithering when blitting
         mCanvasPaint = Paint(Paint.DITHER_FLAG)
         mBrushSize = 20.toFloat()
     }
@@ -59,19 +76,17 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        /**
-         * Draw the specified bitmap, with its top/left corner at (x,y), using the specified paint,
-         * transformed by the current matrix.
-         *
-         * If the bitmap and canvas have different densities, this function will take care of
-         * automatically scaling the bitmap to draw at the same density as the canvas.
-         *
-         * @param bitmap The bitmap to be drawn
-         * @param left The position of the left side of the bitmap being drawn
-         * @param top The position of the top side of the bitmap being drawn
-         * @param paint The paint used to draw the bitmap (may be null)
-         */
-        mCanvasBitmap?.let { canvas.drawBitmap(it, 0f, 0f, mCanvasPaint) }
+        /* Draw the specified bitmap, with its top/left corner at (x,y),
+           using the specified paint, transformed by the current matrix */
+        mCanvasBitmap?.let {
+            canvas.drawBitmap(it, 0f, 0f, mCanvasPaint)
+        }
+
+        for (path in mPaths) {
+            mDrawPaint?.strokeWidth = path.brushThickness
+            mDrawPaint?.color = path.color
+            canvas.drawPath(path, mDrawPaint!!)
+        }
 
         if (!mDrawPath!!.isEmpty) {
             mDrawPaint!!.strokeWidth = mDrawPath!!.brushThickness
@@ -100,14 +115,14 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             // Add a line from the last point to the specified point (x,y).
             MotionEvent.ACTION_MOVE -> mDrawPath!!.lineTo(touchX, touchY)
             MotionEvent.ACTION_UP -> {
-//                canvas?.drawPath(mDrawPath!!, mDrawPaint!!)
-//                mDrawPath!!.reset()
+                // Add when the stroke is drawn to canvas, and added in the path arraylist
+                mPaths.add(mDrawPath!!)
                 mDrawPath = CustomPath(color, mBrushSize)
             }
             else -> return false
         }
-        invalidate()
 
+        invalidate()
         return true
     }
 
