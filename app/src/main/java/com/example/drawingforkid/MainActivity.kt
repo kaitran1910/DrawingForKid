@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
+
     // A variable for current color is picked from color pallet.
     private var mImageButtonCurrentPaint: ImageButton? = null
 
@@ -59,5 +60,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         brushDialog.show()
+    }
+
+    /**
+     * Method is called when color is clicked from pallet_normal.
+     *
+     * @param view ImageButton on which click took place.
+     */
+    fun paintClicked(view: ImageButton) {
+        if (view !== mImageButtonCurrentPaint) {
+            val imageButton = view as ImageButton
+            // Here the tag is used for swapping the current color with previous color
+            val colorTag = imageButton.tag.toString()
+            drawingView?.setColor(colorTag)
+
+            // Swap the backgrounds for last active and currently active image button
+            imageButton.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.pallet_pressed
+                )
+            )
+            mImageButtonCurrentPaint?.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.pallet_normal
+                )
+            )
+        }
     }
 }

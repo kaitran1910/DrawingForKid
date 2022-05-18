@@ -34,7 +34,8 @@
             android:background="@color/black"
             android:scaleType="fitXY"
             android:src="@drawable/pallet_normal"
-            android:tag="@color/black" />
+            android:tag="@color/black"
+            android:onClick="paintClicked" />
 
         <ImageButton
             android:layout_width="25dp"
