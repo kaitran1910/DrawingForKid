@@ -3,6 +3,7 @@ package com.example.drawingforkid
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         drawingView = findViewById(R.id.drawingView)
-        drawingView?.setSizeForBrush(20.toFloat())
+        drawingView?.setSizeForBrush(10.toFloat())
 
         val linearLayoutPaintColors = findViewById<LinearLayout>(R.id.ll_paint_colors)
         mImageButtonCurrentPaint = linearLayoutPaintColors.getChildAt(0) as ImageButton
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param view ImageButton on which click took place.
      */
-    fun paintClicked(view: ImageButton) {
+    fun paintClicked(view: View) {
         if (view !== mImageButtonCurrentPaint) {
             val imageButton = view as ImageButton
             // Here the tag is used for swapping the current color with previous color
@@ -87,6 +88,9 @@ class MainActivity : AppCompatActivity() {
                     R.drawable.pallet_normal
                 )
             )
+
+            //Current view is updated with selected view in the form of ImageButton.
+            mImageButtonCurrentPaint = view
         }
     }
 }
